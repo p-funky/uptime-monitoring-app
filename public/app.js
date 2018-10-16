@@ -26,7 +26,7 @@ app.client.request = function(headers,path,method,queryStringObject,payload,call
   callback = typeof(callback) == 'function' ? callback : false;
 
   // For each query string parameter sent, add it to the path
-  const requestUrl = path + '?';
+  let requestUrl = path + '?';
   let counter = 0;
   for(let queryKey in queryStringObject){
      if(queryStringObject.hasOwnProperty(queryKey)){
@@ -81,6 +81,38 @@ app.client.request = function(headers,path,method,queryStringObject,payload,call
   xhr.send(payloadString);
 
 };
+
+// Bind the logout button
+app.bindLogoutButton = function(){
+    document.getElementById("logoutButton").addEventListener("click", function(e){
+  
+      // Stop it from redirecting anywhere
+      e.preventDefault();
+  
+      // Log the user out
+      app.logUserOut();
+  
+    });
+  };
+  
+  // Log the user out then redirect them
+  app.logUserOut = function(){
+    // Get the current token id
+    const tokenId = typeof(app.config.sessionToken.id) == 'string' ? app.config.sessionToken.id : false;
+  
+    // Send the current token to the tokens endpoint to delete it
+    const queryStringObject = {
+      'id' : tokenId
+    };
+    app.client.request(undefined,'api/tokens','DELETE',queryStringObject,undefined,function(statusCode,responsePayload){
+      // Set the app.config token as false
+      app.setSessionToken(false);
+  
+      // Send the user to the logged out page
+      window.location = '/session/deleted';
+  
+    });
+  };  
 
 // Bind the forms
 app.bindForms = function(){
@@ -257,6 +289,9 @@ app.init = function(){
 
   // Bind all form submissions
   app.bindForms();
+
+  // Bind logout logout button
+  app.bindLogoutButton();
 
   // Get the token from localstorage
   app.getSessionToken();
