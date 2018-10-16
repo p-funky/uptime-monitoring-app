@@ -257,6 +257,10 @@ body,p,h1,h2,h3,h4,h5,h6,div,span,header,footer,img,a,a:hover,a:active,a:visited
   tr{
     width: 100%;
   }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2
+}
   
   th{
     text-transform: uppercase;
